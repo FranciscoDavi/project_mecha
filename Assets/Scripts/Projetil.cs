@@ -29,6 +29,7 @@ public class Projetil : MonoBehaviour
         {
             Enemy enemy = other.GetComponent<Enemy>();
             enemy.TakeDamage(damage);
+            enemy.Knockback(15);
             Disppair();
         }
     }

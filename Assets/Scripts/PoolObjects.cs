@@ -3,13 +3,26 @@ using UnityEngine;
 
 public class PoolObjects : MonoBehaviour
 {
-    public List<GameObject> pooledObjects = new List<GameObject>();
-    public GameObject objectToPool;
+    [SerializeField] private List<GameObject> pooledObjects = new List<GameObject>();
+    [SerializeField] private GameObject objectToPool;
     public int amountToPool;
     public bool allowCreation = false;
+    private double limitToReturn = 0;
 
-    private void Awake()
+
+    public void SetLimitToReturn(double value)
     {
+        if (value > amountToPool) {
+            return;
+        }
+
+        limitToReturn = value;
+
+    }
+    public void InitPool(int amount)
+    {
+        amountToPool = amount;
+
         for (int i = 0; i < amountToPool; i++)
         {
             pooledObjects.Add(CreateObject());
@@ -27,7 +40,7 @@ public class PoolObjects : MonoBehaviour
     }
     public GameObject GetObject()
     {
-        for (int i = 0; i < pooledObjects.Count; i++)
+        for (int i = 0; i < limitToReturn; i++)
         {
             if (!pooledObjects[i].activeInHierarchy)
             {

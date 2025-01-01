@@ -10,27 +10,14 @@ public class ShotPlayer : MonoBehaviour
     private float lastShotTime;
     [SerializeField] private float fireCooldown = 0.5f;
 
-
-    //Iniciando varias e referencias
-    private void Awake()
+    private void Start()
     {
-        shotPoint = transform.position;
+        shotPool.InitPool(5);
+        shotPool.SetLimitToReturn(5);
     }
-    private void Update()
-    {
-        //Definindo a posição, deve ser melhorado posteriormente quando adicionar assets
-        shotPoint = transform.position;
-    }
-
     private void FixedUpdate()
     {
-        //Verifica a posição do mouse e rotaciona o jogador em direção a ele
-        Vector3 aimPos = GetMousePosition();
-        Vector3 relativePosition = (aimPos - transform.position).normalized;
-        relativePosition.y = 0;
-
-        Quaternion aimRotation = Quaternion.LookRotation(relativePosition);
-        transform.rotation = Quaternion.Slerp(transform.rotation, aimRotation, Time.deltaTime * 5);
+       lookForMouse();
     }
 
     public void OnFire(InputAction.CallbackContext context)
@@ -51,6 +38,7 @@ public class ShotPlayer : MonoBehaviour
                 {
                     projectile.transform.position = transform.position;
                     projectile.SetActive(true);
+
                     Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
                     if (rb != null)
@@ -78,7 +66,18 @@ public class ShotPlayer : MonoBehaviour
     
         return Vector3.zero;
     }
-     
+    
+
+    private void lookForMouse()
+    {
+        //Verifica a posição do mouse e rotaciona o jogador em direção a ele
+        Vector3 aimPos = GetMousePosition();
+        Vector3 relativePosition = (aimPos - transform.position).normalized;
+        relativePosition.y = 0;
+
+        Quaternion aimRotation = Quaternion.LookRotation(relativePosition);
+        transform.rotation = Quaternion.Slerp(transform.rotation, aimRotation, Time.deltaTime * 5);
+    }
      
  
 }

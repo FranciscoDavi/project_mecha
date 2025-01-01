@@ -1,18 +1,17 @@
-using TMPro;
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
-    [SerializeField] private TextMeshProUGUI levelText;
     public static GameManager Instance;
     public PoolObjects pool;
-    private float spawnRate;
-    private int auxDir = 1; //usada para trocar a direção de spawn dos inimigos
 
-    private float currentExperiencie = 0;
-    private float maxExperiencie = 30;
+    private int enemiesToPool = 20;
+    private double maxEnemies = 5;
+    private float spawnRate = .5f;
 
+    private float currentExperience = 0;
+    private double maxExperience = 50;
     private int level = 1;
 
     private void Awake()
@@ -22,41 +21,41 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        InvokeRepeating("SpawnEnemies", 1, 1);
-        levelText.SetText($"{level}");
+        //Determina a quantidade de inimigos inicial
+        pool.InitPool(enemiesToPool);
+
+        InvokeRepeating("SpawnEnemies", spawnRate, 1);
+       
     }
 
     public void SpawnEnemies()
     {
+        pool.SetLimitToReturn(maxEnemies); 
         GameObject enemy = pool.GetObject();
+
         if (enemy != null)
         {
-            enemy.transform.position = RandomPositionSpawn();
             enemy.SetActive(true);
-
         }
     }
 
-    public Vector3 RandomPositionSpawn()
-    {
-        auxDir *= -1;
-        float random = Random.Range(1.1f, 1.8f) * auxDir;
-
-        Vector3 pos = Camera.main.ViewportToWorldPoint(new Vector3(random, random, 20f));
-        return pos;
-    }
-
-    public void SetExperience(float experience)
-    {
-       
-        currentExperiencie += experience;
-        if(currentExperiencie > maxExperiencie)
+    public void GainExperience(float experience)
+    {   
+        currentExperience += experience;
+        if(currentExperience > maxExperience)
         {
-            level++;
-            maxExperiencie += 30;
+            LevelUp();
         }
-        levelText.SetText($"{level}");
     }
 
-   
+    public void LevelUp()
+    {
+        level++;
+        maxEnemies = Math.Round(maxEnemies * 1.5);
+        maxExperience = Math.Round(maxExperience * 1.6);
+
+        Debug.Log($"Level: {level} \n MaxEnemies: {maxEnemies} \n Experience: {currentExperience} \n MaxExperience: {maxExperience}");
+    }
+
+
 }
