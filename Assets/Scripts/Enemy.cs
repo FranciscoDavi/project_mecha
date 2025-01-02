@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -56,7 +55,7 @@ public class Enemy : MonoBehaviour
     {
         /*Verifica se existe um alvo, caso exista pega a posição dele e utiliza o MoveTowards para
           ir em direção ao alvo, em seguida, ajusta a rotação do inimigo para que sempre fique de frente para o jogador*/
-        if (target != null)
+        if (target != null && target.gameObject.activeInHierarchy)
         {
             float step = speed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, target.position, step);
@@ -79,9 +78,7 @@ public class Enemy : MonoBehaviour
        currentLife -= dmg;
        if(currentLife <= 0) 
        {
-            GameManager.Instance.GainExperience(experience);
-            gameObject.SetActive(false);
-            currentLife = maxLife;
+            Die();
        }
     }
 
@@ -89,11 +86,19 @@ public class Enemy : MonoBehaviour
     public Vector3 RandomPositionSpawn()
     {
         auxDir *= -1;
-        float randomx = UnityEngine.Random.Range(1.1f, 1.8f) * auxDir;
-        float randomz = UnityEngine.Random.Range(1.1f, 1.8f) * auxDir;
+        float randomx = Random.Range(1.1f, 1.8f) * auxDir;
+        float randomz = Random.Range(1.1f, 1.8f) * auxDir;
 
         Vector3 pos = Camera.main.ViewportToWorldPoint(new Vector3(randomx, randomz, 20f));
         return pos;
+    }
+
+
+    public void Die()
+    {
+        GameManager.Instance.GainEnergy(experience);
+        gameObject.SetActive(false);
+        currentLife = maxLife;
     }
 
 }

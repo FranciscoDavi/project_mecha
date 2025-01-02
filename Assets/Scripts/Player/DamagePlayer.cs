@@ -1,22 +1,20 @@
-using TMPro;
 using UnityEngine;
 
 public class DamagePlayer : MonoBehaviour
 {
-    [SerializeField] public int totalLife = 100;
-    private int currentLife = 0;
+    public float maxHealth = 100;
     private float timeToTakeDamage = 1;
     private float lastDamageTime;
 
-    private void Start()
-    { 
-        currentLife = totalLife;
+    private void Awake()
+    {
+        GameStats.Instance.maxHealth = this.maxHealth;    
     }
 
     private void TakeDamage(int dmg)
     {
-        currentLife -= dmg;
-        if (currentLife <= 0)
+        GameStats.Instance.currentHealth -= dmg;
+        if (GameStats.Instance.currentHealth <= 0)
         {
             Die();
         }
@@ -45,7 +43,9 @@ public class DamagePlayer : MonoBehaviour
     private void Die()
     {
         gameObject.SetActive(false);
+        GameManager.Instance.GameOver();
     }
 
+   
    
 }

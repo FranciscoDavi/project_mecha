@@ -15,11 +15,12 @@ public class ShotPlayer : MonoBehaviour
         shotPool.InitPool(5);
         shotPool.SetLimitToReturn(5);
     }
+
     private void FixedUpdate()
     {
        lookForMouse();
     }
-
+   
     public void OnFire(InputAction.CallbackContext context)
     {
         //Verfica se ação de clicar foi concluida
@@ -79,5 +80,6 @@ public class ShotPlayer : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, aimRotation, Time.deltaTime * 5);
     }
      
+   
  
 }
