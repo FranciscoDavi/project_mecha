@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DamagePlayer : MonoBehaviour
 {
-    public float maxHealth = 100;
+    public  float maxHealth = 100;
     private float timeToTakeDamage = 1;
     private float lastDamageTime;
 

@@ -82,7 +82,6 @@ public class Enemy : MonoBehaviour
        }
     }
 
-
     public Vector3 RandomPositionSpawn()
     {
         auxDir *= -1;
