@@ -8,7 +8,7 @@ public class DamagePlayer : MonoBehaviour
 
     private void Awake()
     {
-        GameStats.Instance.maxHealth = this.maxHealth;    
+        GameStats.Instance.maxHealth = maxHealth;    
     }
 
     private void TakeDamage(int dmg)
@@ -19,6 +19,8 @@ public class DamagePlayer : MonoBehaviour
             Die();
         }
     }
+
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy") && Time.time > lastDamageTime + timeToTakeDamage)
@@ -26,7 +28,7 @@ public class DamagePlayer : MonoBehaviour
 
             Enemy enemy = collision.gameObject.GetComponent<Enemy>();
 
-            TakeDamage(enemy.GetDamage());
+            TakeDamage(enemy.damage);
             lastDamageTime = Time.time;
 
             int enemyLayer = LayerMask.GetMask("Enemies");

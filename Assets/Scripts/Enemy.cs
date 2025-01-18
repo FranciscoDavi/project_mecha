@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    private Transform target;
+    protected Transform target;
     protected float speed = 5f;
     protected float currentLife = 3f;
     protected float maxLife;
-    protected int damage = 10;
+    public int damage = 10;
     protected float experience = 10f;
 
     protected Vector3 relativePosition;
@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
         {
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
+
         maxLife = currentLife;
     }
 
@@ -51,7 +52,7 @@ public class Enemy : MonoBehaviour
         return damage;
     }
 
-    public void MoveToPlayer()
+    protected virtual void MoveToPlayer()
     {
         /*Verifica se existe um alvo, caso exista pega a posição dele e utiliza o MoveTowards para
           ir em direção ao alvo, em seguida, ajusta a rotação do inimigo para que sempre fique de frente para o jogador*/
@@ -84,6 +85,7 @@ public class Enemy : MonoBehaviour
 
     public Vector3 RandomPositionSpawn()
     {
+        //Retorna uma posição fora  da camera
         auxDir *= -1;
         float randomx = Random.Range(1.1f, 1.8f) * auxDir;
         float randomz = Random.Range(1.1f, 1.8f) * auxDir;
