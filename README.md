@@ -1,2 +1,2 @@
 # project_mecha
- A spaceshooter made in Unity
+ A Space Wars made in Unity
