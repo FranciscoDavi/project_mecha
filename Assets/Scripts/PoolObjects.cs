@@ -1,38 +1,40 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class PoolObjects : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> pooledObjects = new List<GameObject>();
-    [SerializeField] private GameObject objectToPool;
-    public int amountToPool;
-    public bool allowCreation = false;
-    private double limitToReturn = 0;
+    [SerializeField] private List<GameObject> PooledObjects = new List<GameObject>();
+    private GameObject ObjectToPool;
+    private int AmountToPool;
+    private bool AllowCreation = false;
+    private double LimitToReturn;
+    
+    public void InitPool(GameObject prefab, int amount, int limit) {
+        ObjectToPool = prefab;
+        AmountToPool = amount;
+        LimitToReturn = limit;
 
+        for (int i = 0; i < AmountToPool; i++)
+        {
+            PooledObjects.Add(CreateObject());
+        }
+    }
 
     public void SetLimitToReturn(double value)
     {
-        if (value > amountToPool) {
+        if (value > AmountToPool) {
             return;
         }
 
-        limitToReturn = value;
+        LimitToReturn = value;
 
     }
-    public void InitPool(int amount)
-    {
-        amountToPool = amount;
-
-        for (int i = 0; i < amountToPool; i++)
-        {
-            pooledObjects.Add(CreateObject());
-        }
-    }
-
+    
     public GameObject CreateObject(bool active = false)
     {
         GameObject obj;
-        obj = Instantiate(objectToPool);
+        obj = Instantiate(ObjectToPool);
         obj.transform.SetParent(gameObject.transform);
         obj.SetActive(active);
         return obj;
@@ -40,18 +42,18 @@ public class PoolObjects : MonoBehaviour
     }
     public GameObject GetObject()
     {
-        for (int i = 0; i < limitToReturn; i++)
+        for (int i = 0; i < LimitToReturn; i++)
         {
-            if (!pooledObjects[i].activeInHierarchy)
+            if (!PooledObjects[i].activeInHierarchy)
             {
-                return pooledObjects[i];
+                return PooledObjects[i];
             }
         }
 
-        if (allowCreation)
+        if (AllowCreation)
         {
             GameObject obj = CreateObject(true);
-            pooledObjects.Add(obj);
+            PooledObjects.Add(obj);
             return obj;
         }
 

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    protected Transform target;
+    [SerializeField]protected Transform target;
     protected float speed = 5f;
     protected float currentLife = 3f;
     protected float maxLife;

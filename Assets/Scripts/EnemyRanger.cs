@@ -1,40 +1,36 @@
-using System.Collections;
-using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class EnemyRanger : Enemy
 {
-    public GameObject projetilPrefab;
-    public float speedProjetil = 50f;
-    public float distObj;
-    public float minDist = 10f;
-  
-    public float TimeToAttack = 1f;
+    public GameObject ProjectileEnemy;
+    private float SpeedProjetil = 20f;
+    private float DistancePlayer;
+    private float AttackRange = 10f;
+
+    private float TimeToAttack = 1f;
 
     private void Update()
     {
+        if (target != null) {
+            DistancePlayer = Vector3.Distance(transform.position, target.transform.position);
 
-        distObj = Vector3.Distance(transform.position, target.transform.position);
-        Debug.Log(distObj);
+            if (DistancePlayer <= AttackRange)
+            {
+                if (TimeToAttack > 0)
+                    TimeToAttack -= 1 * Time.deltaTime;
 
-        
-        Debug.Log(TimeToAttack);
-        if (distObj <= minDist) 
-        {
-            if(TimeToAttack > 0)
-                TimeToAttack -= 1 * Time.deltaTime;
-
-            if (TimeToAttack <= 0) {
-                Attack();
-                TimeToAttack = 1f;
+                if (TimeToAttack <= 0)
+                {
+                    Attack();
+                    TimeToAttack = 1f;
+                }
             }
         }
     }
     protected override void MoveToPlayer()
     {
-        /*Verifica se existe um alvo, caso exista pega a posição dele e utiliza o MoveTowards para
-          ir em direção ao alvo, em seguida, ajusta a rotação do inimigo para que sempre fique de frente para o jogador*/
-        if (target != null && target.gameObject.activeInHierarchy && distObj >= minDist)
+        if (target != null && target.gameObject.activeInHierarchy && DistancePlayer >= AttackRange)
         {
             float step = speed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, target.position, step);
@@ -47,11 +43,18 @@ public class EnemyRanger : Enemy
 
     public void Attack()
     {
-        relativePosition = (target.position - transform.position).normalized;
-        GameObject projetil = Instantiate(projetilPrefab, transform.position, Quaternion.identity);
-        projetil.GetComponent<Rigidbody>().velocity = relativePosition * speedProjetil;
-     
+        if(TimeToAttack > 0)
+        {
+            TimeToAttack-= Time.deltaTime;
+        }
 
+        if (TimeToAttack <= 0) {
+            GameObject fire = Instantiate(ProjectileEnemy, transform.position, Quaternion.identity);
+            Vector3 shotDirection = (target.position - transform.position ).normalized;
+            fire.GetComponent<Rigidbody>().velocity = SpeedProjetil * shotDirection;
+            TimeToAttack = 1f;
+        }
+        
     }
 
 

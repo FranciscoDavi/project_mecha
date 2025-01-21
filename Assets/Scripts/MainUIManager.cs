@@ -30,6 +30,11 @@ public class MainUIManager : MonoBehaviour
         //Texto somente para debug
         healthTxt.SetText($"{GameStats.Instance.currentHealth} - {GameStats.Instance.maxHealth}") ;
         energyTxt.SetText($"{GameStats.Instance.currentEnergy} - {GameStats.Instance.maxEnergy}");
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseGame();
+        }
     }
 
     private void SetMaxHealth()
@@ -48,11 +53,28 @@ public class MainUIManager : MonoBehaviour
 
     private void Aim()
     {
-        if(GameManager.Instance.isPaused == false)
+        if(GameStats.Instance.isPaused == false)
         {
             crossHair.transform.position = Input.mousePosition;
         }
           
+    }
+
+    public void PauseGame()
+    {
+        GameStats.Instance.isPaused = !GameStats.Instance.isPaused;
+
+        if (GameStats.Instance.isPaused)
+        {
+            Time.timeScale = 0;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Time.timeScale = 1;
+            Cursor.visible = false;
+        }
+
     }
 
 

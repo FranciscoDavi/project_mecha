@@ -5,10 +5,11 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public GameStats stats;
-    public PoolObjects pool;
+    public GameObject EnemiesPrefab;
+    public GameStats Stats;
+    public PoolObjects PoolEnemies;
 
-    private int enemiesToPool = 20;
+    private int EnemiesToPool = 20;
     private double maxEnemies = 5;
     private float spawnRate = .5f;
 
@@ -17,13 +18,13 @@ public class GameManager : MonoBehaviour
     private int level = 1;
 
     public bool isGameActive = false;
-    public bool isPaused = false;
+   
 
     private void Awake()
     {
         Instance = this;
-        stats = GameStats.Instance;
-        stats.maxEnergy = this.maxEnergy;
+        Stats = GameStats.Instance;
+        Stats.maxEnergy = this.maxEnergy;
         Cursor.visible = false;
     }
 
@@ -31,24 +32,15 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         //Determina a quantidade de inimigos inicial
-        pool.InitPool(enemiesToPool);
-
+        PoolEnemies.InitPool(EnemiesPrefab, EnemiesToPool, 5);
         InvokeRepeating("SpawnEnemies", spawnRate, 1);
        
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-        
-            PauseGame();
-        }
-    }
-
     public void SpawnEnemies()
     {
-        pool.SetLimitToReturn(maxEnemies); 
-        GameObject enemy = pool.GetObject();
+        PoolEnemies.SetLimitToReturn(maxEnemies); 
+        GameObject enemy = PoolEnemies.GetObject();
 
         if (enemy != null)
         {
@@ -72,23 +64,7 @@ public class GameManager : MonoBehaviour
         GameStats.Instance.maxEnergy = GameStats.Instance.maxEnergy * 2;
         GameStats.Instance.currentEnergy = 0;
     }
-
-
-    public void PauseGame()
-    {
-        isPaused = !isPaused;
-
-        if (isPaused)
-        {
-            Time.timeScale = 0;
-            Cursor.visible = true;
-        }
-        else{
-            Time.timeScale = 1;
-            Cursor.visible = false;
-        }
-            
-    }
+   
     public void GameOver()
     {
         Debug.Log("Game Over!");

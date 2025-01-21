@@ -3,55 +3,71 @@ using UnityEngine.InputSystem;
 
 public class ShotPlayer : MonoBehaviour
 {
-    //[SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private PoolObjects shotPool;
+    [SerializeField] private GameObject ProjectilePrefab;
+    [SerializeField] private PoolObjects ShotPool;
     [SerializeField] private Vector3 shotPoint;
     [SerializeField] private float projectileSpeed = 50f;
-    private float lastShotTime;
-    [SerializeField] private float fireCooldown = 0.5f;
+    private bool isFiring = false;
+
+    [SerializeField]  private float TimeToShot = .2f;
 
     private void Start()
     {
-        shotPool.InitPool(5);
-        shotPool.SetLimitToReturn(5);
+        ShotPool.InitPool(ProjectilePrefab, 10, 1);
     }
 
+    private void Update()
+    {
+        //Atualiza o tempo para o proximo tiro
+        if (TimeToShot > 0)
+        {
+            TimeToShot -= Time.deltaTime;
+           
+        }
+
+        if (isFiring && TimeToShot <= 0)
+        {
+            //Determina a direção do tiro 
+            Vector3 shotDirection = (GetMousePosition() - transform.position).normalized;
+            shotDirection.y = 0;
+
+            GameObject projectile = ShotPool.GetObject();
+            
+            if (projectile != null)
+            {
+                projectile.transform.position = transform.position;
+                projectile.SetActive(true);
+
+                Rigidbody rb = projectile.GetComponent<Rigidbody>();
+
+                if (rb != null)
+                {
+                    rb.velocity = shotDirection * projectileSpeed;
+                }
+            }
+
+            TimeToShot = .2f; //tempo entre os tiros
+        }
+    }
     private void FixedUpdate()
     {
-       lookForMouse();
+        lookForMouse();
     }
    
     public void OnFire(InputAction.CallbackContext context)
     {
         //Verfica se ação de clicar foi concluida
-        if (context.performed)
-        {    
-            //Verifica se pode realizar um novo tiro
-            if (Time.time > lastShotTime + fireCooldown)
-            {
-                //Determina a direção do tiro com base na posição do mouse
-                Vector3 shotDirection = (GetMousePosition() - transform.position).normalized;
-                shotDirection.y = 0;
-
-                GameObject projectile = shotPool.GetObject();
-                
-                if (projectile != null)
-                {
-                    projectile.transform.position = transform.position;
-                    projectile.SetActive(true);
-
-                    Rigidbody rb = projectile.GetComponent<Rigidbody>();
-
-                    if (rb != null)
-                    {
-                        rb.velocity = shotDirection * projectileSpeed;
-                    }
-
-                    lastShotTime = Time.time;
-                }
-            }
+        if (context.started)
+        {
+            isFiring = true;
         }
+        else if (context.canceled)
+        {
+            isFiring = false;
+        }
+                 
     }
+
     //Cria um plano com os vetores X e Z e um Raycast, caso atinja esse plano, retorne a posição 
     private Vector3 GetMousePosition()
     {
@@ -59,10 +75,14 @@ public class ShotPlayer : MonoBehaviour
         Plane plane = new Plane(Vector3.up, Vector3.zero); 
         
         float distance;
+        int layerMask = ~LayerMask.GetMask("Enemies");
+
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) {
+            return hit.point;
+        }
 
         if (plane.Raycast(ray, out distance)) {
-            Vector3 targetPoint = ray.GetPoint(distance);
-            return targetPoint;
+            return ray.GetPoint(distance);
         }
     
         return Vector3.zero;

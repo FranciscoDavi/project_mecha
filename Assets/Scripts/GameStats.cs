@@ -9,9 +9,10 @@ public class GameStats : MonoBehaviour
     public float moveSpeed;
     public float currentEnergy;
     public float maxEnergy;
-
     public int level;
-  
+    public bool isPaused = false;
+
+
     private void Awake()
     {
         Instance = this;
