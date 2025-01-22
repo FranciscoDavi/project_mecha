@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DamagePlayer : MonoBehaviour
 {
-    public  float maxHealth = 100;
+    private float maxHealth = 100;
     private float timeToTakeDamage = 1;
     private float lastDamageTime;
 
@@ -11,7 +11,7 @@ public class DamagePlayer : MonoBehaviour
         GameStats.Instance.maxHealth = maxHealth;    
     }
 
-    private void TakeDamage(int dmg)
+    public void TakeDamage(int dmg)
     {
         GameStats.Instance.currentHealth -= dmg;
         if (GameStats.Instance.currentHealth <= 0)
@@ -19,7 +19,6 @@ public class DamagePlayer : MonoBehaviour
             Die();
         }
     }
-
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -42,7 +41,7 @@ public class DamagePlayer : MonoBehaviour
         }
     }
 
-    private void Die()
+    public void Die()
     {
         gameObject.SetActive(false);
         GameManager.Instance.GameOver();

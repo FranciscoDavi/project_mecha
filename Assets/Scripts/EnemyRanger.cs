@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class EnemyRanger : Enemy
 {
-    public GameObject ProjectileEnemy;
-    private float SpeedProjetil = 20f;
+    [SerializeField] public GameObject ProjectileEnemy;
+    [SerializeField] private float SpeedProjetil = 20f;
     private float DistancePlayer;
-    private float AttackRange = 10f;
-
-    private float TimeToAttack = 1f;
+    [SerializeField] private float AttackRange = 10f;
+    [SerializeField] private float MoveSpeedWhenAttacking = .7f;
+    [SerializeField] private float TimeToAttack = 1f;
 
     private void Update()
     {
@@ -20,7 +20,7 @@ public class EnemyRanger : Enemy
                 if (TimeToAttack > 0)
                     TimeToAttack -= 1 * Time.deltaTime;
 
-                if (TimeToAttack <= 0)
+                if (TimeToAttack <= 0 && GameManager.Instance.isGameActive)
                 {
                     Attack();
                     TimeToAttack = 1f;
@@ -30,11 +30,16 @@ public class EnemyRanger : Enemy
     }
     protected override void MoveToPlayer()
     {
-        if (target != null && target.gameObject.activeInHierarchy && DistancePlayer >= AttackRange)
+        if (target != null && target.gameObject.activeInHierarchy )
         {
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, target.position, step);
 
+            if (DistancePlayer <= AttackRange)
+            {
+                step *= MoveSpeedWhenAttacking;
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, target.position, step);
             relativePosition = (target.position - transform.position).normalized;
             targetRotation = Quaternion.LookRotation(relativePosition);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, step);

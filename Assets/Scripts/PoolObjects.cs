@@ -4,10 +4,10 @@ using UnityEngine.Pool;
 
 public class PoolObjects : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> PooledObjects = new List<GameObject>();
+    [SerializeField] public List<GameObject> PooledObjects = new List<GameObject>();
     private GameObject ObjectToPool;
     private int AmountToPool;
-    private bool AllowCreation = false;
+    public bool AllowCreation = false;
     private double LimitToReturn;
     
     public void InitPool(GameObject prefab, int amount, int limit) {
