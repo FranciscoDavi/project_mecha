@@ -98,6 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad65e04601d6fc24fab8362a970f1e59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  damage: 10
+  EnergyPrefab: {fileID: 5279212639391058445, guid: b20ef65a0d25beb45a36c829079a58d9, type: 3}
 --- !u!65 &5484365489542365596
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField]protected Transform target;
-    protected float speed = 5f;
+    protected Transform target;
+    public GameObject EnergyPrefab;
+
+    [SerializeField] protected float speed = 10f;
     protected float currentLife = 3f;
     protected float maxLife;
     public int damage = 10;
-    protected float experience = 10f;
+
 
     protected Vector3 relativePosition;
     protected Quaternion targetRotation;
@@ -47,15 +49,9 @@ public class Enemy : MonoBehaviour
         MoveToPlayer();
     }
 
-    public int GetDamage()
-    {
-        return damage;
-    }
-
     protected virtual void MoveToPlayer()
     {
-        /*Verifica se existe um alvo, caso exista pega a posição dele e utiliza o MoveTowards para
-          ir em direção ao alvo, em seguida, ajusta a rotação do inimigo para que sempre fique de frente para o jogador*/
+        /*Move em direção ao jogador se ele existir*/
         if (target != null && target.gameObject.activeInHierarchy)
         {
             float step = speed * Time.deltaTime;
@@ -66,6 +62,7 @@ public class Enemy : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, step);
         }
     }
+
     //Volta o inimigo um pouco para tras com o impacto 
     public void Knockback(float force)
     {
@@ -73,7 +70,7 @@ public class Enemy : MonoBehaviour
         knockbackVelocity = knockbackDirection * force;
     }
 
-    //Diminui a vida quando leva dano e caso zere desativa o objeto
+
     public void TakeDamage(int dmg)
     {
        currentLife -= dmg;
@@ -94,10 +91,17 @@ public class Enemy : MonoBehaviour
         return pos;
     }
 
+    public void DropEnergy()
+    {
+        int amount = Random.Range(1, 3);
+        for (int i = 0; i < amount; i++) {
+            Instantiate(EnergyPrefab, transform.position, Quaternion.identity);
+        }
+    }
 
     public void Die()
     {
-        GameManager.Instance.GainEnergy(experience);
+        DropEnergy();
         gameObject.SetActive(false);
         currentLife = maxLife;
     }
